@@ -1,17 +1,8 @@
-import { Slot } from 'expo-router';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import colors from '@/utils/colors';
+import { Slot } from 'expo-router';
 import styled from 'styled-components/native';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Container>
       <Slot />
@@ -21,5 +12,5 @@ export default function RootLayout() {
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${colors.backgroundColor};
+  background-color: ${colors.black};
 `;

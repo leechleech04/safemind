@@ -1,18 +1,14 @@
 import colors from '@/utils/colors';
+import { BasicContainer } from '@/utils/utilComponents';
 import styled from 'styled-components/native';
 
 const Manual = () => {
   return (
-    <Container>
+    <BasicContainer>
       <Text>Manual</Text>
-    </Container>
+    </BasicContainer>
   );
 };
-
-const Container = styled.View`
-  flex: 1;
-  background-color: ${colors.backgroundColor};
-`;
 
 const Text = styled.Text`
   color: ${colors.white};
