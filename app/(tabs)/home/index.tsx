@@ -1,7 +1,205 @@
+import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
+import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import styled from 'styled-components/native';
 
 const Home = () => {
-  return <BasicContainer></BasicContainer>;
+  return (
+    <BasicContainer>
+      <LocationHeader>
+        <Ionicons name="location-outline" size={32} color="white" />
+        <LocationText>서울시 동작구</LocationText>
+      </LocationHeader>
+      <ScrollContainer>
+        <WariningBanner>
+          <MoreManualsButton>
+            <MoreManualsText>대응 매뉴얼 보기</MoreManualsText>
+            <Ionicons
+              name="chevron-forward-outline"
+              size={28}
+              color={colors.lightGray}
+            />
+          </MoreManualsButton>
+          <Image
+            source={require('@/assets/images/disasters/heatWave.png')}
+            style={{ width: 160, height: 160 }}
+          />
+          <WarningTitle>현재 폭염주의보 발령 중</WarningTitle>
+          <WarningContent>
+            <WarningText>
+              야외 활동을 자제하고 수분 섭취에 유의하세요.
+            </WarningText>
+            <Ionicons name="warning-outline" size={48} color={colors.red} />
+          </WarningContent>
+        </WariningBanner>
+        <BannerTitle>현재 날씨</BannerTitle>
+        <WeatherBanner>
+          <TemparatureBox>
+            <TemparatureText>32°C</TemparatureText>
+            <ApparantTempratureText>체감 온도 35°C</ApparantTempratureText>
+          </TemparatureBox>
+          <Ionicons
+            name="sunny-outline"
+            size={80}
+            color={colors.yellow}
+            style={{ marginLeft: 'auto' }}
+          />
+        </WeatherBanner>
+        <BannerTitle>주요 경보</BannerTitle>
+        <AlertBanner>
+          <Ionicons
+            name="thermometer-outline"
+            size={28}
+            color={colors.orange}
+          />
+          <AlertTitle>폭염</AlertTitle>
+          <HeatWaveContent>주의</HeatWaveContent>
+        </AlertBanner>
+        <AlertBanner>
+          <Ionicons name="snow-outline" size={28} color={colors.blue} />
+          <AlertTitle>한파</AlertTitle>
+          <ColdWaveContent>좋음</ColdWaveContent>
+        </AlertBanner>
+        <AlertBanner>
+          <Ionicons name="business-outline" size={28} color={colors.red} />
+          <AlertTitle>미세먼지</AlertTitle>
+          <ParticularMatter>85 ㎍/㎥</ParticularMatter>
+          <FineDustContent>나쁨</FineDustContent>
+        </AlertBanner>
+      </ScrollContainer>
+    </BasicContainer>
+  );
 };
+
+const ScrollContainer = styled.ScrollView`
+  flex: 1;
+  width: 100%;
+`;
+
+const LocationHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 8px;
+`;
+
+const LocationText = styled.Text`
+  color: ${colors.white};
+  font-size: 20px;
+  margin-left: 8px;
+  font-weight: bold;
+`;
+
+const WariningBanner = styled.View`
+  background-color: ${colors.darkRed};
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 24px;
+  width: 100%;
+`;
+
+const MoreManualsButton = styled.Pressable`
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const MoreManualsText = styled.Text`
+  color: ${colors.lightGray};
+  font-size: 16px;
+  margin-right: 4px;
+`;
+
+const WarningTitle = styled.Text`
+  color: ${colors.white};
+  font-size: 24px;
+  font-weight: bold;
+`;
+
+const WarningContent = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+  width: 100%;
+  margin-top: 4px;
+`;
+
+const WarningText = styled.Text`
+  flex: 1;
+  color: ${colors.lightGray};
+  font-size: 18px;
+`;
+
+const BannerTitle = styled.Text`
+  color: ${colors.white};
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 24px;
+`;
+
+const WeatherBanner = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${colors.darkGray};
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  width: 100%;
+`;
+
+const TemparatureBox = styled.View``;
+
+const TemparatureText = styled.Text`
+  color: ${colors.white};
+  font-size: 40px;
+  font-weight: bold;
+`;
+
+const ApparantTempratureText = styled.Text`
+  color: ${colors.lightGray};
+  font-size: 18px;
+  margin-top: 4px;
+`;
+
+const AlertBanner = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${colors.darkGray};
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  width: 100%;
+`;
+
+const AlertTitle = styled.Text`
+  color: ${colors.white};
+  font-size: 20px;
+  margin-left: 16px;
+`;
+
+const AlertContent = styled.Text`
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: auto;
+`;
+
+const HeatWaveContent = styled(AlertContent)`
+  color: ${colors.orange};
+`;
+
+const ColdWaveContent = styled(AlertContent)`
+  color: ${colors.blue};
+`;
+
+const FineDustContent = styled(AlertContent)`
+  color: ${colors.red};
+`;
+
+const ParticularMatter = styled.Text`
+  color: ${colors.lightGray};
+  font-size: 16px;
+  margin-left: 8px;
+`;
 
 export default Home;

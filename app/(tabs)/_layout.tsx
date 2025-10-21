@@ -10,7 +10,7 @@ const TabLayout = () => {
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: colors.red,
-          tabBarInactiveTintColor: colors.gray,
+          tabBarInactiveTintColor: colors.lightGray,
           tabBarStyle: {
             backgroundColor: colors.backgroundColor,
           },
@@ -24,7 +24,7 @@ const TabLayout = () => {
               <Ionicons
                 name="home"
                 size={24}
-                color={focused ? colors.red : colors.gray}
+                color={focused ? colors.red : colors.lightGray}
               />
             ),
           }}
@@ -37,7 +37,7 @@ const TabLayout = () => {
               <Ionicons
                 name="book"
                 size={24}
-                color={focused ? colors.red : colors.gray}
+                color={focused ? colors.red : colors.lightGray}
               />
             ),
           }}
@@ -50,7 +50,7 @@ const TabLayout = () => {
               <Ionicons
                 name="map"
                 size={24}
-                color={focused ? colors.red : colors.gray}
+                color={focused ? colors.red : colors.lightGray}
               />
             ),
           }}
@@ -63,7 +63,7 @@ const TabLayout = () => {
               <Ionicons
                 name="construct"
                 size={24}
-                color={focused ? colors.red : colors.gray}
+                color={focused ? colors.red : colors.lightGray}
               />
             ),
           }}
@@ -76,7 +76,7 @@ const TabLayout = () => {
               <Ionicons
                 name="settings"
                 size={24}
-                color={focused ? colors.red : colors.gray}
+                color={focused ? colors.red : colors.lightGray}
               />
             ),
           }}
