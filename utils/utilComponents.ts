@@ -4,5 +4,5 @@ import colors from './colors';
 export const BasicContainer = styled.View`
   flex: 1;
   padding: 16px;
-  background-color: ${colors.black};
+  background-color: ${colors.backgroundColor};
 `;

@@ -44,5 +44,5 @@ export default function RootLayout() {
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${colors.black};
+  background-color: ${colors.backgroundColor};
 `;

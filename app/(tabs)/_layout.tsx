@@ -9,11 +9,10 @@ const TabLayout = () => {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: colors.yellow,
+          tabBarActiveTintColor: colors.red,
           tabBarInactiveTintColor: colors.gray,
           tabBarStyle: {
-            backgroundColor: colors.black,
-            borderBottomColor: colors.yellow,
+            backgroundColor: colors.backgroundColor,
           },
         }}
       >
@@ -24,8 +23,8 @@ const TabLayout = () => {
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 name="home"
-                size={30}
-                color={focused ? colors.yellow : colors.gray}
+                size={24}
+                color={focused ? colors.red : colors.gray}
               />
             ),
           }}
@@ -37,8 +36,8 @@ const TabLayout = () => {
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 name="book"
-                size={30}
-                color={focused ? colors.yellow : colors.gray}
+                size={24}
+                color={focused ? colors.red : colors.gray}
               />
             ),
           }}
@@ -50,8 +49,8 @@ const TabLayout = () => {
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 name="map"
-                size={30}
-                color={focused ? colors.yellow : colors.gray}
+                size={24}
+                color={focused ? colors.red : colors.gray}
               />
             ),
           }}
@@ -63,8 +62,8 @@ const TabLayout = () => {
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 name="construct"
-                size={30}
-                color={focused ? colors.yellow : colors.gray}
+                size={24}
+                color={focused ? colors.red : colors.gray}
               />
             ),
           }}
@@ -76,8 +75,8 @@ const TabLayout = () => {
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 name="settings"
-                size={30}
-                color={focused ? colors.yellow : colors.gray}
+                size={24}
+                color={focused ? colors.red : colors.gray}
               />
             ),
           }}
