@@ -1,4 +1,3 @@
-import DisasterItem from '@/components/DisasterItem';
 import colors from '@/utils/colors';
 import {
   naturalDisasters,
@@ -8,100 +7,122 @@ import {
 } from '@/utils/disasters';
 import { BasicContainer } from '@/utils/utilComponents';
 import { useEffect, useState } from 'react';
-import { ImageSourcePropType, View } from 'react-native';
+import { ImageSourcePropType } from 'react-native';
 import styled from 'styled-components/native';
 
 const Manual = () => {
-  const [selectedSection, setSelectedSection] = useState<
-    'natural' | 'urban' | 'social' | 'tech'
-  >('natural');
+  const [sector, setSector] = useState<'natural' | 'urban' | 'social' | 'tech'>(
+    'natural'
+  );
 
-  const [disasterData, setDisasterData] = useState<
-    {
-      title: string;
-      imageUri: ImageSourcePropType;
-    }[]
-  >([]);
+  const [disasterData, setDisasterData] = useState<{
+    title: string;
+    summary: string;
+    items: { title: string; image: ImageSourcePropType }[];
+  } | null>(null);
 
   useEffect(() => {
-    if (selectedSection === 'natural') {
-      setDisasterData(naturalDisasters.items);
-    } else if (selectedSection === 'urban') {
-      setDisasterData(urbanDisasters.items);
-    } else if (selectedSection === 'social') {
-      setDisasterData(socialDisasters.items);
-    } else if (selectedSection === 'tech') {
-      setDisasterData(techDisasters.items);
+    if (sector === 'natural') {
+      setDisasterData(naturalDisasters);
+    } else if (sector === 'urban') {
+      setDisasterData(urbanDisasters);
+    } else if (sector === 'social') {
+      setDisasterData(socialDisasters);
+    } else if (sector === 'tech') {
+      setDisasterData(techDisasters);
     }
-  }, [selectedSection]);
+  }, [sector]);
 
   return (
     <BasicContainer>
-      <SectionNav>
-        <SectionButton
-          isSelected={selectedSection === 'natural'}
-          onPress={() => setSelectedSection('natural')}
+      <Header>
+        <HeaderTitle>재난 대응 매뉴얼</HeaderTitle>
+      </Header>
+      <SectorNavigation>
+        <SectorButton
+          selected={sector === 'natural'}
+          onPress={() => setSector('natural')}
         >
-          <SectionButtonText>자연</SectionButtonText>
-        </SectionButton>
-        <View style={{ width: 1, height: 20, backgroundColor: colors.white }} />
-        <SectionButton
-          isSelected={selectedSection === 'urban'}
-          onPress={() => setSelectedSection('urban')}
+          <SectorButtonText selected={sector === 'natural'}>
+            자연재난
+          </SectorButtonText>
+        </SectorButton>
+        <SectorButton
+          selected={sector === 'urban'}
+          onPress={() => setSector('urban')}
         >
-          <SectionButtonText>생활·도시</SectionButtonText>
-        </SectionButton>
-        <View style={{ width: 1, height: 20, backgroundColor: colors.white }} />
-        <SectionButton
-          isSelected={selectedSection === 'social'}
-          onPress={() => setSelectedSection('social')}
+          <SectorButtonText selected={sector === 'urban'}>
+            생활·도시
+          </SectorButtonText>
+        </SectorButton>
+        <SectorButton
+          selected={sector === 'social'}
+          onPress={() => setSector('social')}
         >
-          <SectionButtonText>사회·보건</SectionButtonText>
-        </SectionButton>
-        <View style={{ width: 1, height: 20, backgroundColor: colors.white }} />
-        <SectionButton
-          isSelected={selectedSection === 'tech'}
-          onPress={() => setSelectedSection('tech')}
+          <SectorButtonText selected={sector === 'social'}>
+            사회·보건
+          </SectorButtonText>
+        </SectorButton>
+        <SectorButton
+          selected={sector === 'tech'}
+          onPress={() => setSector('tech')}
         >
-          <SectionButtonText>기술·정보</SectionButtonText>
-        </SectionButton>
-      </SectionNav>
-      <DisasterList
-        data={disasterData}
-        renderItem={({
-          item,
-        }: {
-          item: { title: string; imageUri: ImageSourcePropType };
-        }) => <DisasterItem title={item.title} imageUri={item.imageUri} />}
-        keyExtractor={({ title }: { title: string }) => title}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      />
+          <SectorButtonText selected={sector === 'tech'}>
+            기술·정보
+          </SectorButtonText>
+        </SectorButton>
+      </SectorNavigation>
+      {disasterData && (
+        <>
+          <SectorSummary>{disasterData.summary}</SectorSummary>
+        </>
+      )}
     </BasicContainer>
   );
 };
 
-const SectionNav = styled.View`
-  flex-direction: row;
-  justify-content: space-evenly;
+const Header = styled.View`
+  width: 100%;
   align-items: center;
-  background-color: ${colors.darkGray};
-  padding: 12px 0;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: 8px 0;
 `;
 
-const SectionButton = styled.Pressable<{ isSelected: boolean }>`
-  border-bottom-width: ${({ isSelected }: { isSelected: boolean }) =>
-    isSelected ? '2px' : '0px'};
-  border-bottom-color: ${colors.white};
-`;
-
-const SectionButtonText = styled.Text`
+const HeaderTitle = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
   color: ${colors.white};
-  font-size: 16px;
+`;
+
+const SectorNavigation = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 16px;
+  background-color: ${colors.darkGray};
+  border-radius: 8px;
+`;
+
+const SectorButton = styled.Pressable<{ selected: boolean }>`
+  flex: 1;
+  align-items: center;
+  padding: 8px 0;
+  border-radius: 8px;
+  background-color: ${({ selected }: { selected: boolean }) =>
+    selected ? colors.red : colors.darkGray};
+`;
+
+const SectorButtonText = styled.Text<{ selected: boolean }>`
+  color: ${({ selected }: { selected: boolean }) =>
+    selected ? colors.white : colors.lightGray};
+  font-size: 14px;
   font-weight: bold;
 `;
 
-const DisasterList = styled.FlatList``;
+const SectorSummary = styled.Text`
+  color: ${colors.lightGray};
+  font-size: 14px;
+  line-height: 22px;
+  margin-top: 16px;
+`;
 
 export default Manual;

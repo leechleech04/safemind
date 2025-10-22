@@ -1,9 +1,9 @@
 const colors = {
   backgroundColor: '#101c22',
-  red: '#d32f2f',
+  red: '#ff1744',
   darkRed: '#361f24',
   lightGray: '#9fa3a6',
-  darkGray: '#191f22',
+  darkGray: '#1e1e1e',
   yellow: '#facc15',
   orange: '#f97316',
   blue: '#60a5fa',
