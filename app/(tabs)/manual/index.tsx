@@ -1,3 +1,4 @@
+import ManualItem from '@/components/ManualItem';
 import colors from '@/utils/colors';
 import {
   naturalDisasters,
@@ -7,19 +8,21 @@ import {
 } from '@/utils/disasters';
 import { BasicContainer } from '@/utils/utilComponents';
 import { useEffect, useState } from 'react';
-import { ImageSourcePropType } from 'react-native';
+import { ImageSourcePropType, View } from 'react-native';
 import styled from 'styled-components/native';
+
+interface DisasterType {
+  title: string;
+  summary: string;
+  items: { title: string; image: ImageSourcePropType }[];
+}
 
 const Manual = () => {
   const [sector, setSector] = useState<'natural' | 'urban' | 'social' | 'tech'>(
     'natural'
   );
 
-  const [disasterData, setDisasterData] = useState<{
-    title: string;
-    summary: string;
-    items: { title: string; image: ImageSourcePropType }[];
-  } | null>(null);
+  const [disasterData, setDisasterData] = useState<DisasterType | null>(null);
 
   useEffect(() => {
     if (sector === 'natural') {
@@ -72,11 +75,17 @@ const Manual = () => {
           </SectorButtonText>
         </SectorButton>
       </SectorNavigation>
-      {disasterData && (
-        <>
-          <SectorSummary>{disasterData.summary}</SectorSummary>
-        </>
-      )}
+      {disasterData && <SectorSummary>{disasterData.summary}</SectorSummary>}
+      <ManualList
+        data={disasterData ? disasterData.items : []}
+        keyExtractor={(item: DisasterType) => item.title}
+        renderItem={({
+          item,
+        }: {
+          item: { title: string; image: ImageSourcePropType };
+        }) => <ManualItem title={item.title} image={item.image} />}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      />
     </BasicContainer>
   );
 };
@@ -122,6 +131,11 @@ const SectorSummary = styled.Text`
   color: ${colors.lightGray};
   font-size: 14px;
   line-height: 22px;
+  margin-top: 16px;
+`;
+
+const ManualList = styled.FlatList`
+  width: 100%;
   margin-top: 16px;
 `;
 
