@@ -2,11 +2,32 @@ import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import * as Location from 'expo-location';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 
 const Home = () => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getCurrentLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      dispatch({
+        type: 'location/setLocation',
+        payload: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        },
+      });
+    };
+    getCurrentLocation();
+  }, []);
 
   return (
     <BasicContainer>

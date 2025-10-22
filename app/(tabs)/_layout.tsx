@@ -56,7 +56,7 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="tools/index"
+          name="tools"
           options={{
             title: '도구',
             tabBarIcon: ({ focused }) => (
