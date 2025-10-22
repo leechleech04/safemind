@@ -15,7 +15,14 @@ const ManualItem = ({
   const router = useRouter();
 
   return (
-    <Container onPress={() => router.push(`/manual/${title}`)}>
+    <Container
+      onPress={() =>
+        router.push({
+          pathname: '/manual/[title]',
+          params: { title },
+        })
+      }
+    >
       <ImageBox>
         <DisasterIcon source={image} style={{ tintColor: colors.red }} />
       </ImageBox>

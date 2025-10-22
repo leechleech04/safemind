@@ -91,7 +91,7 @@ const LocationText = styled.Text`
 `;
 
 const WariningBanner = styled.View`
-  background-color: ${colors.darkRed};
+  background-color: ${colors.red}22;
   padding: 16px;
   border-radius: 8px;
   margin-top: 24px;
@@ -133,7 +133,7 @@ const WarningText = styled.Text`
 
 const BannerTitle = styled.Text`
   color: ${colors.white};
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   margin-top: 24px;
 `;
@@ -152,13 +152,13 @@ const TemparatureBox = styled.View``;
 
 const TemparatureText = styled.Text`
   color: ${colors.white};
-  font-size: 40px;
+  font-size: 36px;
   font-weight: bold;
 `;
 
 const ApparantTempratureText = styled.Text`
   color: ${colors.lightGray};
-  font-size: 18px;
+  font-size: 16px;
   margin-top: 4px;
 `;
 
@@ -174,12 +174,12 @@ const AlertBanner = styled.View`
 
 const AlertTitle = styled.Text`
   color: ${colors.white};
-  font-size: 20px;
+  font-size: 18px;
   margin-left: 16px;
 `;
 
 const AlertContent = styled.Text`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   margin-left: auto;
 `;

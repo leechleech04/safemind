@@ -30,7 +30,7 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="manual/index"
+          name="manual"
           options={{
             title: '매뉴얼',
             tabBarIcon: ({ focused }) => (
