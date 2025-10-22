@@ -1,12 +1,15 @@
+import ReduxProvider from '@/ReduxProvider';
 import colors from '@/utils/colors';
 import { Slot } from 'expo-router';
 import styled from 'styled-components/native';
 
 export default function RootLayout() {
   return (
-    <Container>
-      <Slot />
-    </Container>
+    <ReduxProvider>
+      <Container>
+        <Slot />
+      </Container>
+    </ReduxProvider>
   );
 }
 

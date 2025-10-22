@@ -2,9 +2,12 @@ import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 
 const Home = () => {
+  const dispatch = useDispatch();
+
   return (
     <BasicContainer>
       <LocationHeader>
@@ -48,11 +51,7 @@ const Home = () => {
         </WeatherBanner>
         <BannerTitle>주요 경보</BannerTitle>
         <AlertBanner>
-          <Ionicons
-            name="thermometer-outline"
-            size={28}
-            color={colors.orange}
-          />
+          <Ionicons name="thermometer-outline" size={28} color={colors.red} />
           <AlertTitle>폭염</AlertTitle>
           <HeatWaveContent>주의</HeatWaveContent>
         </AlertBanner>
@@ -62,7 +61,7 @@ const Home = () => {
           <ColdWaveContent>좋음</ColdWaveContent>
         </AlertBanner>
         <AlertBanner>
-          <Ionicons name="business-outline" size={28} color={colors.red} />
+          <Ionicons name="business-outline" size={28} color={colors.orange} />
           <AlertTitle>미세먼지</AlertTitle>
           <ParticularMatter>85 ㎍/㎥</ParticularMatter>
           <FineDustContent>나쁨</FineDustContent>
@@ -128,7 +127,7 @@ const WarningContent = styled.View`
 const WarningText = styled.Text`
   flex: 1;
   color: ${colors.lightGray};
-  font-size: 18px;
+  font-size: 16px;
 `;
 
 const BannerTitle = styled.Text`
@@ -185,7 +184,7 @@ const AlertContent = styled.Text`
 `;
 
 const HeatWaveContent = styled(AlertContent)`
-  color: ${colors.orange};
+  color: ${colors.red};
 `;
 
 const ColdWaveContent = styled(AlertContent)`
@@ -193,7 +192,7 @@ const ColdWaveContent = styled(AlertContent)`
 `;
 
 const FineDustContent = styled(AlertContent)`
-  color: ${colors.red};
+  color: ${colors.orange};
 `;
 
 const ParticularMatter = styled.Text`
