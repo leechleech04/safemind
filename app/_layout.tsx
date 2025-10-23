@@ -1,6 +1,6 @@
 import ReduxProvider from '@/ReduxProvider';
 import colors from '@/utils/colors';
-import AsyncStroage from '@react-native-async-storage/async-storage';
+import { default as AsyncStroage } from '@react-native-async-storage/async-storage';
 import { Slot } from 'expo-router';
 import { useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -9,6 +9,7 @@ const RootLayout = () => {
   useEffect(() => {
     const setChecklistItems = async () => {
       try {
+        // await AsyncStorage.removeItem('@safemind/checklist');
         const response = await AsyncStroage.getItem('@safemind/checklist');
         if (!response) {
           const defaultChecklist = {
@@ -17,15 +18,15 @@ const RootLayout = () => {
                 name: '생존 필수품',
                 items: [
                   {
-                    label: '식수 6L',
+                    label: '식수',
                     isChecked: false,
                   },
                   {
-                    label: '비상식량 6000–8000kcal',
+                    label: '비상식량(즉석밥, 통조림, 에너지바 등)',
                     isChecked: false,
                   },
                   {
-                    label: '보조배터리 10,000mAh+ 2개',
+                    label: '보조배터리',
                     isChecked: false,
                   },
                   {
@@ -33,7 +34,7 @@ const RootLayout = () => {
                     isChecked: false,
                   },
                   {
-                    label: '휴대 라디오(크랭크 겸용)',
+                    label: '휴대 라디오',
                     isChecked: false,
                   },
                   {
@@ -50,7 +51,7 @@ const RootLayout = () => {
                 name: '응급·의약품',
                 items: [
                   {
-                    label: '개인 복용약 7일분',
+                    label: '개인 복용약',
                     isChecked: false,
                   },
                   {
@@ -92,15 +93,15 @@ const RootLayout = () => {
                 name: '도구·정비/취사',
                 items: [
                   {
-                    label: '가스버너 + 부탄 2캔',
+                    label: '가스버너 + 부탄',
                     isChecked: false,
                   },
                   {
-                    label: '라이터 2개/방수 성냥',
+                    label: '라이터/방수 성냥',
                     isChecked: false,
                   },
                   {
-                    label: '접이 컵·수저·물통(2–5L)',
+                    label: '접이 컵·수저·물통',
                     isChecked: false,
                   },
                   {
@@ -121,7 +122,7 @@ const RootLayout = () => {
                     isChecked: false,
                   },
                   {
-                    label: '여벌 속옷/양말(압축)',
+                    label: '여벌 속옷/양말',
                     isChecked: false,
                   },
                   {
