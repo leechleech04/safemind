@@ -1,18 +1,17 @@
 import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import styled from 'styled-components/native';
 
 const Tools = () => {
   const router = useRouter();
 
+  const [flashOn, setFlashOn] = useState(false);
+  const [permission, requsetPermission] = useCameraPermissions();
+
   const tools = [
-    {
-      title: '손전등',
-      subtitle: '어두운 곳을 빠르게 비추기',
-      image: require('@/assets/images/tools/flashlight.png'),
-      onPress: () => router.push('/tools/flashlight'),
-    },
     {
       title: '사이렌',
       subtitle: '긴급 상황 시 경고음 울리기',
@@ -57,10 +56,35 @@ const Tools = () => {
     },
   ];
 
+  const flashlightToggle = () => {
+    if (!permission?.granted) {
+      requsetPermission();
+      return;
+    }
+    setFlashOn(!flashOn);
+  };
+
   return (
     <BasicContainer>
+      {flashOn && (
+        <CameraView style={{ width: 0, height: 0 }} enableTorch={true} />
+      )}
+      <Header>
+        <HeaderTitle>비상 도구함</HeaderTitle>
+      </Header>
       <ScrollContainer>
         <ToolContainer>
+          <FlashlightBox onPress={flashlightToggle} flashOn={flashOn}>
+            <ToolItemImage
+              source={require('@/assets/images/tools/flashlight.png')}
+              resizeMode="contain"
+              style={{ tintColor: flashOn ? colors.yellow : colors.red }}
+            />
+            <ToolItemTitle flashOn={flashOn}>손전등</ToolItemTitle>
+            <ToolItemSubtitle flashOn={flashOn}>
+              어두운 곳을 빠르게 비추기
+            </ToolItemSubtitle>
+          </FlashlightBox>
           {tools.map((tool, index) => (
             <ToolItemBox key={index} onPress={tool.onPress}>
               <ToolItemImage
@@ -77,6 +101,18 @@ const Tools = () => {
     </BasicContainer>
   );
 };
+
+const Header = styled.View`
+  width: 100%;
+  align-items: center;
+  padding: 8px 0;
+`;
+
+const HeaderTitle = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  color: ${colors.white};
+`;
 
 const ScrollContainer = styled.ScrollView`
   flex: 1;
@@ -118,6 +154,14 @@ const ToolItemSubtitle = styled.Text`
   color: ${colors.lightGray};
   font-size: 12px;
   text-align: center;
+`;
+
+const FlashlightBox = styled(ToolItemBox)<{ flashOn: boolean }>`
+  background-color: ${({ flashOn }: { flashOn: boolean }) =>
+    flashOn ? `${colors.yellow}22` : colors.gray};
+  border: 3px solid
+    ${({ flashOn }: { flashOn: boolean }) =>
+      flashOn ? colors.yellow : colors.gray};
 `;
 
 export default Tools;

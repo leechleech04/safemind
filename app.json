@@ -51,6 +51,12 @@
           "locationAlwaysAndWhenInUsePermission": "앱이 백그라운드에 있을 때도 위치 정보에 접근하려면 허용해주세요.",
           "locationWhenInUsePermission": "앱을 사용하는 동안 위치 정보에 접근하려면 허용해주세요."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "비상 도구함의 손전등 기능을 사용하려면 카메라 접근 권한이 필요합니다."
+        }
       ]
     ],
     "experiments": {
