@@ -128,7 +128,7 @@ const ToolContainer = styled.View`
 `;
 
 const ToolItemBox = styled.Pressable`
-  background-color: ${colors.gray};
+  background-color: ${colors.darkGray};
   width: 160px;
   height: 160px;
   border-radius: 8px;
@@ -158,10 +158,10 @@ const ToolItemSubtitle = styled.Text`
 
 const FlashlightBox = styled(ToolItemBox)<{ flashOn: boolean }>`
   background-color: ${({ flashOn }: { flashOn: boolean }) =>
-    flashOn ? `${colors.yellow}22` : colors.gray};
+    flashOn ? `${colors.yellow}22` : colors.darkGray};
   border: 3px solid
     ${({ flashOn }: { flashOn: boolean }) =>
-      flashOn ? colors.yellow : colors.gray};
+      flashOn ? colors.yellow : colors.darkGray};
 `;
 
 export default Tools;
