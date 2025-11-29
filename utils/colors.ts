@@ -7,6 +7,8 @@ const colors = {
   yellow: '#facc15',
   orange: '#f97316',
   blue: '#60a5fa',
+  lightBlue: '#93c5fd',
+  darkBlue: '#3b82f6',
   white: '#FFFFFF',
   black: '#000000',
 };

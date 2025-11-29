@@ -28,8 +28,4 @@ const Container = styled.View`
   background-color: ${colors.backgroundColor};
 `;
 
-const Text = styled.Text`
-  color: ${colors.white};
-`;
-
 export default Map;

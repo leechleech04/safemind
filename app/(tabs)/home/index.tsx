@@ -1,14 +1,23 @@
+import useWeather from '@/hooks/useWeather';
+import { RootState } from '@/store';
 import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
+import {
+  getColdWaveLevel,
+  getHeatWaveLevel,
+  getParticularMatterLevel,
+  getWeatherIcon,
+} from '@/utils/weather';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const location = useSelector((state: RootState) => state.location);
 
   useEffect(() => {
     const getCurrentLocation = async () => {
@@ -18,6 +27,7 @@ const Home = () => {
         return;
       }
       let location = await Location.getCurrentPositionAsync({});
+      console.log('location:', location.coords);
       dispatch({
         type: 'location/setLocation',
         payload: {
@@ -28,6 +38,28 @@ const Home = () => {
     };
     getCurrentLocation();
   }, []);
+
+  const {
+    getWeather,
+    getParticularMatter,
+    temperature,
+    setTemperature,
+    precipitation,
+    setPrecipitation,
+    perceivedTemperature,
+    setPerceivedTemperature,
+    particularMatter,
+    setParticularMatter,
+  } = useWeather();
+
+  useEffect(() => {
+    if (location.latitude && location.longitude) {
+      getWeather();
+      getParticularMatter();
+    }
+  }, [location]);
+
+  const weatherIcon = getWeatherIcon(precipitation ?? 0);
 
   return (
     <BasicContainer>
@@ -60,8 +92,18 @@ const Home = () => {
         <BannerTitle>현재 날씨</BannerTitle>
         <WeatherBanner>
           <TemparatureBox>
-            <TemparatureText>32°C</TemparatureText>
-            <ApparantTempratureText>체감 온도 35°C</ApparantTempratureText>
+            {temperature ? (
+              <TemparatureText>{temperature}°C</TemparatureText>
+            ) : (
+              <TemparatureText>--°C</TemparatureText>
+            )}
+            {perceivedTemperature ? (
+              <ApparantTempratureText>
+                체감 온도 {perceivedTemperature}°C
+              </ApparantTempratureText>
+            ) : (
+              <ApparantTempratureText>체감 온도 --°C</ApparantTempratureText>
+            )}
           </TemparatureBox>
           <Ionicons
             name="sunny-outline"
@@ -74,18 +116,32 @@ const Home = () => {
         <AlertBanner>
           <Ionicons name="thermometer-outline" size={28} color={colors.red} />
           <AlertTitle>폭염</AlertTitle>
-          <HeatWaveContent>주의</HeatWaveContent>
+          <HeatWaveContent>
+            {temperature ? getHeatWaveLevel(temperature) : '--'}
+          </HeatWaveContent>
         </AlertBanner>
         <AlertBanner>
           <Ionicons name="snow-outline" size={28} color={colors.blue} />
           <AlertTitle>한파</AlertTitle>
-          <ColdWaveContent>좋음</ColdWaveContent>
+          <ColdWaveContent>
+            {temperature ? getColdWaveLevel(temperature) : '--'}
+          </ColdWaveContent>
         </AlertBanner>
         <AlertBanner>
           <Ionicons name="business-outline" size={28} color={colors.orange} />
           <AlertTitle>미세먼지</AlertTitle>
-          <ParticularMatter>85 ㎍/㎥</ParticularMatter>
-          <FineDustContent>나쁨</FineDustContent>
+          {particularMatter ? (
+            <ParticularMatter>{particularMatter} ㎍/㎥</ParticularMatter>
+          ) : (
+            <ParticularMatter>-- ㎍/㎥</ParticularMatter>
+          )}
+          {particularMatter ? (
+            <FineDustContent>
+              {getParticularMatterLevel(particularMatter)}
+            </FineDustContent>
+          ) : (
+            <FineDustContent>--</FineDustContent>
+          )}
         </AlertBanner>
       </ScrollContainer>
     </BasicContainer>

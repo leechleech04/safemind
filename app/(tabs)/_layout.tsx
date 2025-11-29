@@ -1,9 +1,37 @@
+import { setLocation } from '@/slices/locationSlice';
 import colors from '@/utils/colors';
 import { Ionicons } from '@expo/vector-icons';
+import {
+  getCurrentPositionAsync,
+  requestForegroundPermissionsAsync,
+} from 'expo-location';
 import { Tabs } from 'expo-router';
+import { useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 const TabLayout = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getLocation = async () => {
+      const { status } = await requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Location permission not granted');
+        return;
+      }
+
+      const location = await getCurrentPositionAsync({});
+      dispatch(
+        setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        })
+      );
+    };
+    getLocation();
+  }, []);
+
   return (
     <Container>
       <Tabs
@@ -62,19 +90,6 @@ const TabLayout = () => {
             tabBarIcon: ({ focused }) => (
               <Ionicons
                 name="construct"
-                size={24}
-                color={focused ? colors.red : colors.lightGray}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="settings/index"
-          options={{
-            title: '설정',
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="settings"
                 size={24}
                 color={focused ? colors.red : colors.lightGray}
               />

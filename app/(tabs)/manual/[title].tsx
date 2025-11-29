@@ -251,7 +251,7 @@ const SectorTitle = styled.Text`
 const SectorContent = styled.Text`
   color: ${colors.white};
   font-size: 16px;
-  line-height: 24px;
+  line-height: 28px;
   margin-top: 24px;
   padding: 0px 8px;
 `;

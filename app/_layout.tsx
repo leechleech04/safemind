@@ -1,8 +1,14 @@
 import ReduxProvider from '@/ReduxProvider';
+import { setLocation } from '@/slices/locationSlice';
 import colors from '@/utils/colors';
 import { default as AsyncStroage } from '@react-native-async-storage/async-storage';
+import {
+  getCurrentPositionAsync,
+  requestForegroundPermissionsAsync,
+} from 'expo-location';
 import { Slot } from 'expo-router';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 
 const RootLayout = () => {

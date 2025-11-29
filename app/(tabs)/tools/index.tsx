@@ -30,30 +30,6 @@ const Tools = () => {
       image: require('@/assets/images/tools/firstAid.png'),
       onPress: () => router.push('/tools/firstAid'),
     },
-    {
-      title: '사고 트라우마',
-      subtitle: '사고 후 심리 회복 가이드',
-      image: require('@/assets/images/tools/trauma.png'),
-      onPress: () => router.push('/tools/trauma'),
-    },
-    {
-      title: '대피소 생활',
-      subtitle: '대피소에서의 생활 안내',
-      image: require('@/assets/images/tools/shelter.png'),
-      onPress: () => router.push('/tools/shelter'),
-    },
-    {
-      title: '위치 공유',
-      subtitle: '긴급 상황 시 내 위치 알리기',
-      image: require('@/assets/images/tools/locationShare.png'),
-      onPress: () => router.push('/tools/locationShare'),
-    },
-    {
-      title: '긴급 전화',
-      subtitle: '긴급 연락처 빠르게 호출하기',
-      image: require('@/assets/images/tools/emergencyContact.png'),
-      onPress: () => router.push('/tools/emergencyContact'),
-    },
   ];
 
   const flashlightToggle = () => {
