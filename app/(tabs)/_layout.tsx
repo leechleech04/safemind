@@ -71,19 +71,6 @@ const TabLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="map/index"
-          options={{
-            title: '지도',
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="map"
-                size={24}
-                color={focused ? colors.red : colors.lightGray}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
           name="tools"
           options={{
             title: '도구',

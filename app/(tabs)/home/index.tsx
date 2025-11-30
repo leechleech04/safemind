@@ -1,23 +1,33 @@
 import useWeather from '@/hooks/useWeather';
 import { RootState } from '@/store';
 import colors from '@/utils/colors';
+import { getLocalName } from '@/utils/localName';
 import { BasicContainer } from '@/utils/utilComponents';
 import {
   getColdWaveLevel,
   getHeatWaveLevel,
   getParticularMatterLevel,
-  getWeatherIcon,
 } from '@/utils/weather';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/native';
+import { getWeatherIcon } from './../../../utils/weather';
 
 const Home = () => {
   const dispatch = useDispatch();
   const location = useSelector((state: RootState) => state.location);
+  const [localName, setLocalName] =
+    useState<string>('위치 정보 불러오는 중...');
+
+  useEffect(() => {
+    if (location.latitude && location.longitude) {
+      const name = getLocalName(location.latitude, location.longitude);
+      name.then((res) => setLocalName(res));
+    }
+  }, [location]);
 
   useEffect(() => {
     const getCurrentLocation = async () => {
@@ -27,7 +37,6 @@ const Home = () => {
         return;
       }
       let location = await Location.getCurrentPositionAsync({});
-      console.log('location:', location.coords);
       dispatch({
         type: 'location/setLocation',
         payload: {
@@ -42,6 +51,7 @@ const Home = () => {
   const {
     getWeather,
     getParticularMatter,
+    getSpecialReport,
     temperature,
     setTemperature,
     precipitation,
@@ -50,45 +60,39 @@ const Home = () => {
     setPerceivedTemperature,
     particularMatter,
     setParticularMatter,
+    warnings,
+    setWarnings,
   } = useWeather();
 
   useEffect(() => {
     if (location.latitude && location.longitude) {
       getWeather();
       getParticularMatter();
+      getSpecialReport();
     }
   }, [location]);
-
-  const weatherIcon = getWeatherIcon(precipitation ?? 0);
 
   return (
     <BasicContainer>
       <LocationHeader>
         <Ionicons name="location-outline" size={32} color="white" />
-        <LocationText>서울시 동작구</LocationText>
+        <LocationText>{localName}</LocationText>
       </LocationHeader>
       <ScrollContainer>
-        <WariningBanner>
-          <MoreManualsButton>
-            <MoreManualsText>대응 매뉴얼 보기</MoreManualsText>
-            <Ionicons
-              name="chevron-forward-outline"
-              size={28}
-              color={colors.lightGray}
-            />
-          </MoreManualsButton>
-          <Image
-            source={require('@/assets/images/disasters/heatWave.png')}
-            style={{ width: 160, height: 160 }}
-          />
-          <WarningTitle>현재 폭염주의보 발령 중</WarningTitle>
-          <WarningContent>
-            <WarningText>
-              야외 활동을 자제하고 수분 섭취에 유의하세요.
-            </WarningText>
-            <Ionicons name="warning-outline" size={48} color={colors.red} />
-          </WarningContent>
-        </WariningBanner>
+        {warnings.length > 0 &&
+          warnings.map((warning, index) => (
+            <WariningBanner
+              key={index}
+              isWarning={warning.type.includes('경보')}
+            >
+              <Image
+                source={warning.image}
+                style={{ width: 120, height: 120 }}
+              />
+              <WarningTitle>현재 {warning.type} 발령 중</WarningTitle>
+              <WarningRegion>{warning.regions}</WarningRegion>
+            </WariningBanner>
+          ))}
         <BannerTitle>현재 날씨</BannerTitle>
         <WeatherBanner>
           <TemparatureBox>
@@ -106,9 +110,9 @@ const Home = () => {
             )}
           </TemparatureBox>
           <Ionicons
-            name="sunny-outline"
+            name={getWeatherIcon(precipitation ?? 0).name}
             size={80}
-            color={colors.yellow}
+            color={getWeatherIcon(precipitation ?? 0).color}
             style={{ marginLeft: 'auto' }}
           />
         </WeatherBanner>
@@ -167,44 +171,27 @@ const LocationText = styled.Text`
 `;
 
 const WariningBanner = styled.View`
-  background-color: ${colors.red}22;
+  background-color: ${({ isWarning }: { isWarning: boolean }) =>
+    isWarning ? colors.red : colors.orange}22;
+  border: ${({ isWarning }: { isWarning: boolean }) =>
+    isWarning ? `2px solid ${colors.red}` : `2px solid ${colors.orange}`};
   padding: 16px;
   border-radius: 8px;
   margin-top: 24px;
   width: 100%;
 `;
 
-const MoreManualsButton = styled.Pressable`
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const MoreManualsText = styled.Text`
-  color: ${colors.lightGray};
-  font-size: 16px;
-  margin-right: 4px;
-`;
-
 const WarningTitle = styled.Text`
   color: ${colors.white};
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
 `;
 
-const WarningContent = styled.View`
-  flex-direction: row;
-  align-items: flex-end;
-  width: 100%;
-  margin-top: 4px;
-`;
-
-const WarningText = styled.Text`
+const WarningRegion = styled.Text`
   flex: 1;
   color: ${colors.lightGray};
-  font-size: 16px;
+  font-size: 14px;
+  margin-top: 4px;
 `;
 
 const BannerTitle = styled.Text`

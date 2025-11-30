@@ -1,7 +1,39 @@
 import { RootState } from '@/store';
 import axios from 'axios';
 import { useState } from 'react';
+import { ImageSourcePropType } from 'react-native';
 import { useSelector } from 'react-redux';
+
+interface WarningType {
+  type: string;
+  regions: string;
+  image: ImageSourcePropType | null;
+}
+
+const warningImages: {
+  [key: string]: ImageSourcePropType;
+} = {
+  강풍주의보: require('../assets/images/disasters/strongWind.png'),
+  강풍특보: require('../assets/images/disasters/strongWind.png'),
+  호우주의보: require('../assets/images/disasters/flood.png'),
+  호우특보: require('../assets/images/disasters/flood.png'),
+  한파주의보: require('../assets/images/disasters/coldWave.png'),
+  한파특보: require('../assets/images/disasters/coldWave.png'),
+  건조주의보: require('../assets/images/disasters/drought.png'),
+  건조특보: require('../assets/images/disasters/drought.png'),
+  폭풍해일주의보: require('../assets/images/disasters/tsunami.png'),
+  폭풍해일특보: require('../assets/images/disasters/tsunami.png'),
+  풍랑주의보: require('../assets/images/disasters/tsunami.png'),
+  풍랑특보: require('../assets/images/disasters/tsunami.png'),
+  태풍주의보: require('../assets/images/disasters/typhoon.png'),
+  태풍특보: require('../assets/images/disasters/typhoon.png'),
+  대설주의보: require('../assets/images/disasters/heavySnow.png'),
+  대설특보: require('../assets/images/disasters/heavySnow.png'),
+  황사주의보: require('../assets/images/disasters/yellowDust.png'),
+  황사특보: require('../assets/images/disasters/yellowDust.png'),
+  폭염주의보: require('../assets/images/disasters/heatWave.png'),
+  폭염특보: require('../assets/images/disasters/heatWave.png'),
+};
 
 const useWeather = () => {
   const location = useSelector((state: RootState) => state.location);
@@ -12,6 +44,7 @@ const useWeather = () => {
     number | null
   >(null);
   const [particularMatter, setParticularMatter] = useState<number | null>(null);
+  const [warnings, setWarnings] = useState<WarningType[]>([]);
 
   const getBaseDate = () => {
     const date = new Date();
@@ -199,9 +232,7 @@ const useWeather = () => {
   };
 
   const getParticularMatter = async () => {
-    const lat = location.latitude?.toFixed(2);
-    const lon = location.longitude?.toFixed(2);
-    const url = `https://api.waqi.info/feed/geo:${lat};${lon}/`;
+    const url = `https://api.waqi.info/feed/geo:${location.latitude};${location.longitude}/`;
 
     try {
       const response = await axios.get(url, {
@@ -221,9 +252,56 @@ const useWeather = () => {
     }
   };
 
+  const parseWarnings = (warningText: string): WarningType[] => {
+    if (warningText === 'o 없음') {
+      return [];
+    }
+
+    const warnings = warningText
+      .split('\r\n')
+      .filter((line) => line.trim().startsWith('o'))
+      .map((line) => {
+        const match = line.match(/o\s*([^:]+)\s*:\s*(.+)/);
+        if (match) {
+          const type = match[1].trim();
+          const regions = match[2].trim();
+          const image = warningImages[type] || null;
+          return { type, regions, image };
+        }
+        return null;
+      })
+      .filter((w): w is WarningType => w !== null);
+
+    return warnings;
+  };
+
+  const getSpecialReport = async () => {
+    const uri =
+      'https://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnStatus';
+
+    try {
+      const response = await axios.get(uri, {
+        params: {
+          serviceKey: process.env.EXPO_PUBLIC_WEATHER_API_KEY,
+          pageNo: '1',
+          numOfRows: '10',
+          dataType: 'JSON',
+        },
+      });
+
+      const report = response.data.response.body.items.item[0].t6;
+      const parsedWarnings = parseWarnings(report);
+      setWarnings(parsedWarnings);
+    } catch (error) {
+      console.error('특보 정보 가져오기 실패:', error);
+      throw error;
+    }
+  };
+
   return {
     getWeather,
     getParticularMatter,
+    getSpecialReport,
     temperature,
     setTemperature,
     precipitation,
@@ -232,6 +310,8 @@ const useWeather = () => {
     setPerceivedTemperature,
     particularMatter,
     setParticularMatter,
+    warnings,
+    setWarnings,
   };
 };
 
