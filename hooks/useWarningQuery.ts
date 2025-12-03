@@ -1,7 +1,7 @@
 import { fetchWarning } from '@/api/warning';
 import { useQuery } from '@tanstack/react-query';
 
-export const useWarningsQuery = () => {
+export const useWarningQuery = () => {
   return useQuery({
     queryKey: ['warnings'],
     queryFn: fetchWarning,

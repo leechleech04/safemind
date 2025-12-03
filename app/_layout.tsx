@@ -1,8 +1,11 @@
 import ReduxProvider from '@/ReduxProvider';
+import { assets } from '@/utils/assets';
 import colors from '@/utils/colors';
+import { Ionicons } from '@expo/vector-icons';
 import { default as AsyncStroage } from '@react-native-async-storage/async-storage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Slot } from 'expo-router';
+import { Asset } from 'expo-asset';
+import { Slot, SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 
@@ -169,6 +172,19 @@ const RootLayout = () => {
   }, []);
 
   const [queryClient] = useState(() => new QueryClient());
+
+  const preloadImages = () => {
+    return Asset.loadAsync(assets);
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      await Ionicons.loadFont();
+      await preloadImages();
+      await SplashScreen.hideAsync();
+    };
+    load();
+  }, []);
 
   return (
     <ReduxProvider>

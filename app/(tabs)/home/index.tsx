@@ -1,6 +1,6 @@
 import { useLocalNameQuery } from '@/hooks/useLocalNameQuery';
 import { useParticularMatter } from '@/hooks/useParticularMatterQuery';
-import { useWarningsQuery } from '@/hooks/useWarningQuery';
+import { useWarningQuery } from '@/hooks/useWarningQuery';
 import { useWeatherQuery } from '@/hooks/useWeatherQuery';
 import { RootState } from '@/store';
 import colors from '@/utils/colors';
@@ -13,7 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, RefreshControl } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 import { getWeatherIcon } from './../../../utils/weather';
@@ -41,34 +42,58 @@ const Home = () => {
     getCurrentLocation();
   }, []);
 
-  const { data: weather, isLoading: isWeatherLoading } = useWeatherQuery(
-    location.latitude!,
-    location.longitude!
-  );
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { data: pm25, isLoading: isPm25Loading } = useParticularMatter(
-    location.latitude!,
-    location.longitude!
-  );
+  const {
+    data: weather,
+    isLoading: isWeatherLoading,
+    refetch: weatherRefetch,
+  } = useWeatherQuery(location.latitude!, location.longitude!);
 
-  const { data: warning, isLoading: isWarningLoading } = useWarningsQuery();
+  const {
+    data: pm25,
+    isLoading: isPm25Loading,
+    refetch: particularMatterRefetch,
+  } = useParticularMatter(location.latitude!, location.longitude!);
 
-  const { data: localName, isLoading: isLocalNameLoading } = useLocalNameQuery(
-    location.latitude!,
-    location.longitude!
-  );
+  const {
+    data: warning,
+    isLoading: isWarningLoading,
+    refetch: warningRefetch,
+  } = useWarningQuery();
 
+  const {
+    data: localName,
+    isLoading: isLocalNameLoading,
+    refetch: localNameRefetch,
+  } = useLocalNameQuery(location.latitude!, location.longitude!);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([
+      weatherRefetch(),
+      particularMatterRefetch(),
+      warningRefetch(),
+      localNameRefetch(),
+    ]);
+    setRefreshing(false);
+  }, []);
+  console.log(warning);
   return (
     <BasicContainer>
       <LocationHeader>
         <Ionicons name="location-outline" size={32} color="white" />
-        {isLocalNameLoading ? (
+        {!localName || isLocalNameLoading ? (
           <LocationText>위치 불러오는 중...</LocationText>
         ) : (
           <LocationText>{localName}</LocationText>
         )}
       </LocationHeader>
-      <ScrollContainer>
+      <ScrollContainer
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <BannerTitle>현재 날씨</BannerTitle>
         <WeatherBanner>
           <TemparatureBox>
@@ -86,36 +111,48 @@ const Home = () => {
               </>
             )}
           </TemparatureBox>
-          <Ionicons
-            name={getWeatherIcon(weather?.precipitation ?? 0).name}
-            size={80}
-            color={getWeatherIcon(weather?.precipitation ?? 0).color}
-            style={{ marginLeft: 'auto' }}
-          />
+          {weather ? (
+            <Ionicons
+              name={getWeatherIcon(weather.precipitation ?? 0).name}
+              size={80}
+              color={getWeatherIcon(weather.precipitation ?? 0).color}
+              style={{ marginLeft: 'auto' }}
+            />
+          ) : (
+            <ActivityIndicator
+              style={{ marginLeft: 'auto' }}
+              color={colors.red}
+              size={'large'}
+            />
+          )}
         </WeatherBanner>
         <BannerTitle>주요 경보</BannerTitle>
         <AlertBanner>
           <Ionicons name="thermometer-outline" size={28} color={colors.red} />
           <AlertTitle>폭염</AlertTitle>
           <HeatWaveContent>
-            {weather && !isWeatherLoading
-              ? getHeatWaveLevel(weather.temperature!)
-              : '--'}
+            {weather && !isWeatherLoading ? (
+              getHeatWaveLevel(weather.temperature!)
+            ) : (
+              <ActivityIndicator color={colors.red} size={'small'} />
+            )}
           </HeatWaveContent>
         </AlertBanner>
         <AlertBanner>
           <Ionicons name="snow-outline" size={28} color={colors.blue} />
           <AlertTitle>한파</AlertTitle>
           <ColdWaveContent>
-            {weather && !isWeatherLoading
-              ? getColdWaveLevel(weather.temperature!)
-              : '--'}
+            {weather && !isWeatherLoading ? (
+              getColdWaveLevel(weather.temperature!)
+            ) : (
+              <ActivityIndicator color={colors.blue} size={'small'} />
+            )}
           </ColdWaveContent>
         </AlertBanner>
         <AlertBanner>
           <Ionicons name="business-outline" size={28} color={colors.orange} />
           <AlertTitle>미세먼지</AlertTitle>
-          {pm25 && isPm25Loading ? (
+          {pm25 && !isPm25Loading ? (
             <>
               <ParticularMatter>{pm25} ㎍/㎥</ParticularMatter>
               <FineDustContent>
@@ -125,7 +162,11 @@ const Home = () => {
           ) : (
             <>
               <ParticularMatter>-- ㎍/㎥</ParticularMatter>
-              <FineDustContent>--</FineDustContent>
+              <ActivityIndicator
+                color={colors.orange}
+                style={{ marginLeft: 'auto' }}
+                size={'small'}
+              />
             </>
           )}
         </AlertBanner>
@@ -185,7 +226,6 @@ const WarningTitle = styled.Text`
 `;
 
 const WarningRegion = styled.Text`
-  flex: 1;
   color: ${colors.lightGray};
   font-size: 14px;
   margin-top: 4px;
