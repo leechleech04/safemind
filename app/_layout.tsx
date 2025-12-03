@@ -1,14 +1,9 @@
 import ReduxProvider from '@/ReduxProvider';
-import { setLocation } from '@/slices/locationSlice';
 import colors from '@/utils/colors';
 import { default as AsyncStroage } from '@react-native-async-storage/async-storage';
-import {
-  getCurrentPositionAsync,
-  requestForegroundPermissionsAsync,
-} from 'expo-location';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 
 const RootLayout = () => {
@@ -173,11 +168,15 @@ const RootLayout = () => {
     setChecklistItems();
   }, []);
 
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
     <ReduxProvider>
-      <Container>
-        <Slot />
-      </Container>
+      <QueryClientProvider client={queryClient}>
+        <Container>
+          <Slot />
+        </Container>
+      </QueryClientProvider>
     </ReduxProvider>
   );
 };

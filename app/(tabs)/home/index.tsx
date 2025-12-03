@@ -1,7 +1,9 @@
-import useWeather from '@/hooks/useWeather';
+import { useLocalNameQuery } from '@/hooks/useLocalNameQuery';
+import { useParticularMatter } from '@/hooks/useParticularMatterQuery';
+import { useWarningsQuery } from '@/hooks/useWarningQuery';
+import { useWeatherQuery } from '@/hooks/useWeatherQuery';
 import { RootState } from '@/store';
 import colors from '@/utils/colors';
-import { getLocalName } from '@/utils/localName';
 import { BasicContainer } from '@/utils/utilComponents';
 import {
   getColdWaveLevel,
@@ -11,7 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 import { getWeatherIcon } from './../../../utils/weather';
@@ -19,8 +21,6 @@ import { getWeatherIcon } from './../../../utils/weather';
 const Home = () => {
   const dispatch = useDispatch();
   const location = useSelector((state: RootState) => state.location);
-  const [localName, setLocalName] =
-    useState<string>('위치 정보 불러오는 중...');
 
   useEffect(() => {
     const getCurrentLocation = async () => {
@@ -41,59 +41,55 @@ const Home = () => {
     getCurrentLocation();
   }, []);
 
-  const {
-    getWeather,
-    getParticularMatter,
-    getSpecialReport,
-    temperature,
-    setTemperature,
-    precipitation,
-    setPrecipitation,
-    perceivedTemperature,
-    setPerceivedTemperature,
-    particularMatter,
-    setParticularMatter,
-    warnings,
-    setWarnings,
-  } = useWeather();
+  const { data: weather, isLoading: isWeatherLoading } = useWeatherQuery(
+    location.latitude!,
+    location.longitude!
+  );
 
-  useEffect(() => {
-    if (location.latitude && location.longitude) {
-      const name = getLocalName(location.latitude, location.longitude);
-      name.then((res) => setLocalName(res));
-      getWeather();
-      getParticularMatter();
-      getSpecialReport();
-    }
-  }, [location]);
+  const { data: pm25, isLoading: isPm25Loading } = useParticularMatter(
+    location.latitude!,
+    location.longitude!
+  );
+
+  const { data: warning, isLoading: isWarningLoading } = useWarningsQuery();
+
+  const { data: localName, isLoading: isLocalNameLoading } = useLocalNameQuery(
+    location.latitude!,
+    location.longitude!
+  );
 
   return (
     <BasicContainer>
       <LocationHeader>
         <Ionicons name="location-outline" size={32} color="white" />
-        <LocationText>{localName}</LocationText>
+        {isLocalNameLoading ? (
+          <LocationText>위치 불러오는 중...</LocationText>
+        ) : (
+          <LocationText>{localName}</LocationText>
+        )}
       </LocationHeader>
       <ScrollContainer>
         <BannerTitle>현재 날씨</BannerTitle>
         <WeatherBanner>
           <TemparatureBox>
-            {temperature ? (
-              <TemparatureText>{temperature}°C</TemparatureText>
+            {weather && !isWeatherLoading ? (
+              <>
+                <TemparatureText>{weather.temperature}°C</TemparatureText>
+                <ApparantTempratureText>
+                  체감 온도 {weather.perceivedTemperature}°C
+                </ApparantTempratureText>
+              </>
             ) : (
-              <TemparatureText>--°C</TemparatureText>
-            )}
-            {perceivedTemperature ? (
-              <ApparantTempratureText>
-                체감 온도 {perceivedTemperature}°C
-              </ApparantTempratureText>
-            ) : (
-              <ApparantTempratureText>체감 온도 --°C</ApparantTempratureText>
+              <>
+                <TemparatureText>--°C</TemparatureText>
+                <ApparantTempratureText>체감 온도 --°C</ApparantTempratureText>
+              </>
             )}
           </TemparatureBox>
           <Ionicons
-            name={getWeatherIcon(precipitation ?? 0).name}
+            name={getWeatherIcon(weather?.precipitation ?? 0).name}
             size={80}
-            color={getWeatherIcon(precipitation ?? 0).color}
+            color={getWeatherIcon(weather?.precipitation ?? 0).color}
             style={{ marginLeft: 'auto' }}
           />
         </WeatherBanner>
@@ -102,44 +98,50 @@ const Home = () => {
           <Ionicons name="thermometer-outline" size={28} color={colors.red} />
           <AlertTitle>폭염</AlertTitle>
           <HeatWaveContent>
-            {temperature ? getHeatWaveLevel(temperature) : '--'}
+            {weather && !isWeatherLoading
+              ? getHeatWaveLevel(weather.temperature!)
+              : '--'}
           </HeatWaveContent>
         </AlertBanner>
         <AlertBanner>
           <Ionicons name="snow-outline" size={28} color={colors.blue} />
           <AlertTitle>한파</AlertTitle>
           <ColdWaveContent>
-            {temperature ? getColdWaveLevel(temperature) : '--'}
+            {weather && !isWeatherLoading
+              ? getColdWaveLevel(weather.temperature!)
+              : '--'}
           </ColdWaveContent>
         </AlertBanner>
         <AlertBanner>
           <Ionicons name="business-outline" size={28} color={colors.orange} />
           <AlertTitle>미세먼지</AlertTitle>
-          {particularMatter ? (
-            <ParticularMatter>{particularMatter} ㎍/㎥</ParticularMatter>
+          {pm25 && isPm25Loading ? (
+            <>
+              <ParticularMatter>{pm25} ㎍/㎥</ParticularMatter>
+              <FineDustContent>
+                {getParticularMatterLevel(pm25)}
+              </FineDustContent>
+            </>
           ) : (
-            <ParticularMatter>-- ㎍/㎥</ParticularMatter>
-          )}
-          {particularMatter ? (
-            <FineDustContent>
-              {getParticularMatterLevel(particularMatter)}
-            </FineDustContent>
-          ) : (
-            <FineDustContent>--</FineDustContent>
+            <>
+              <ParticularMatter>-- ㎍/㎥</ParticularMatter>
+              <FineDustContent>--</FineDustContent>
+            </>
           )}
         </AlertBanner>
-        {warnings.length > 0 &&
-          warnings.map((warning, index) => (
+        {warning &&
+          !isWarningLoading &&
+          warning.map((warningItem, index) => (
             <WariningBanner
               key={index}
-              isWarning={warning.type.includes('경보')}
+              isWarning={warningItem.type.includes('경보')}
             >
               <Image
-                source={warning.image}
+                source={warningItem.image}
                 style={{ width: 120, height: 120 }}
               />
-              <WarningTitle>{warning.type} 발령 중</WarningTitle>
-              <WarningRegion>{warning.regions}</WarningRegion>
+              <WarningTitle>{warningItem.type} 발령 중</WarningTitle>
+              <WarningRegion>{warningItem.regions}</WarningRegion>
             </WariningBanner>
           ))}
       </ScrollContainer>
