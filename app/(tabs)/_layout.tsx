@@ -2,6 +2,7 @@ import { setLocation } from '@/slices/locationSlice';
 import colors from '@/utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import {
+  Accuracy,
   getCurrentPositionAsync,
   requestForegroundPermissionsAsync,
 } from 'expo-location';
@@ -15,19 +16,25 @@ const TabLayout = () => {
 
   useEffect(() => {
     const getLocation = async () => {
-      const { status } = await requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Location permission not granted');
-        return;
-      }
+      try {
+        const { status } = await requestForegroundPermissionsAsync();
 
-      const location = await getCurrentPositionAsync({});
-      dispatch(
-        setLocation({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        })
-      );
+        if (status !== 'granted') {
+          console.log('Location permission not granted');
+          return;
+        }
+        const location = await getCurrentPositionAsync({
+          accuracy: Accuracy.Lowest,
+        });
+        dispatch(
+          setLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          })
+        );
+      } catch (error) {
+        console.error('Error getting location:', error);
+      }
     };
     getLocation();
   }, []);

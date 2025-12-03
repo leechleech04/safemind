@@ -23,13 +23,6 @@ const Home = () => {
     useState<string>('위치 정보 불러오는 중...');
 
   useEffect(() => {
-    if (location.latitude && location.longitude) {
-      const name = getLocalName(location.latitude, location.longitude);
-      name.then((res) => setLocalName(res));
-    }
-  }, [location]);
-
-  useEffect(() => {
     const getCurrentLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -66,6 +59,8 @@ const Home = () => {
 
   useEffect(() => {
     if (location.latitude && location.longitude) {
+      const name = getLocalName(location.latitude, location.longitude);
+      name.then((res) => setLocalName(res));
       getWeather();
       getParticularMatter();
       getSpecialReport();
@@ -79,20 +74,6 @@ const Home = () => {
         <LocationText>{localName}</LocationText>
       </LocationHeader>
       <ScrollContainer>
-        {warnings.length > 0 &&
-          warnings.map((warning, index) => (
-            <WariningBanner
-              key={index}
-              isWarning={warning.type.includes('경보')}
-            >
-              <Image
-                source={warning.image}
-                style={{ width: 120, height: 120 }}
-              />
-              <WarningTitle>현재 {warning.type} 발령 중</WarningTitle>
-              <WarningRegion>{warning.regions}</WarningRegion>
-            </WariningBanner>
-          ))}
         <BannerTitle>현재 날씨</BannerTitle>
         <WeatherBanner>
           <TemparatureBox>
@@ -147,6 +128,20 @@ const Home = () => {
             <FineDustContent>--</FineDustContent>
           )}
         </AlertBanner>
+        {warnings.length > 0 &&
+          warnings.map((warning, index) => (
+            <WariningBanner
+              key={index}
+              isWarning={warning.type.includes('경보')}
+            >
+              <Image
+                source={warning.image}
+                style={{ width: 120, height: 120 }}
+              />
+              <WarningTitle>{warning.type} 발령 중</WarningTitle>
+              <WarningRegion>{warning.regions}</WarningRegion>
+            </WariningBanner>
+          ))}
       </ScrollContainer>
     </BasicContainer>
   );

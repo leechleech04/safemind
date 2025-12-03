@@ -18,7 +18,6 @@ export const getLocalName = async (
       },
     });
     const data = response.data;
-    console.log('Geocode data:', data);
     const localName =
       data.address?.city +
       ' ' +
