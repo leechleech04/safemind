@@ -15,8 +15,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 
@@ -79,6 +84,12 @@ const Home = () => {
     ]);
     setRefreshing(false);
   }, []);
+
+  const adUnitId = __DEV__
+    ? TestIds.ADAPTIVE_BANNER
+    : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID;
+
+  const bannerRef = useRef<BannerAd>(null);
 
   return (
     <BasicContainer>
@@ -162,9 +173,25 @@ const Home = () => {
             </WariningBanner>
           ))}
       </ScrollContainer>
+      <BannerAdContainer>
+        <BannerAd
+          ref={bannerRef}
+          unitId={adUnitId!}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </BannerAdContainer>
     </BasicContainer>
   );
 };
+
+const BannerAdContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  margin-top: 16px;
+`;
 
 const ScrollContainer = styled.ScrollView`
   flex: 1;
@@ -174,7 +201,7 @@ const ScrollContainer = styled.ScrollView`
 const LocationHeader = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 8px;
+  padding: 16px 8px;
 `;
 
 const LocationText = styled.Text`

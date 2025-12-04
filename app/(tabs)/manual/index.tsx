@@ -7,8 +7,13 @@ import {
   urbanDisasters,
 } from '@/utils/disasters';
 import { BasicContainer } from '@/utils/utilComponents';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ImageSourcePropType, View } from 'react-native';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import styled from 'styled-components/native';
 
 interface DisasterType {
@@ -35,6 +40,12 @@ const Manual = () => {
       setDisasterData(techDisasters);
     }
   }, [sector]);
+
+  const adUnitId = __DEV__
+    ? TestIds.ADAPTIVE_BANNER
+    : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID;
+
+  const bannerRef = useRef<BannerAd>(null);
 
   return (
     <BasicContainer>
@@ -75,7 +86,6 @@ const Manual = () => {
           </SectorButtonText>
         </SectorButton>
       </SectorNavigation>
-      {disasterData && <SectorSummary>{disasterData.summary}</SectorSummary>}
       <ManualList
         data={disasterData ? disasterData.items : []}
         keyExtractor={(item: DisasterType) => item.title}
@@ -85,10 +95,31 @@ const Manual = () => {
           item: { title: string; image: ImageSourcePropType };
         }) => <ManualItem title={item.title} image={item.image} />}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        ListHeaderComponent={() => {
+          return disasterData ? (
+            <SectorSummary>{disasterData.summary}</SectorSummary>
+          ) : null;
+        }}
       />
+      <BannerAdContainer>
+        <BannerAd
+          ref={bannerRef}
+          unitId={adUnitId!}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </BannerAdContainer>
     </BasicContainer>
   );
 };
+
+const BannerAdContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  margin-top: 16px;
+`;
 
 const Header = styled.View`
   width: 100%;
@@ -131,7 +162,7 @@ const SectorSummary = styled.Text`
   color: ${colors.lightGray};
   font-size: 14px;
   line-height: 22px;
-  margin-top: 16px;
+  margin-bottom: 16px;
 `;
 
 const ManualList = styled.FlatList`

@@ -3,8 +3,13 @@ import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStroage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import styled from 'styled-components/native';
 
 const Checklist = () => {
@@ -128,6 +133,12 @@ const Checklist = () => {
     setIsInputFocused(false);
   };
 
+  const adUnitId = __DEV__
+    ? TestIds.ADAPTIVE_BANNER
+    : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID;
+
+  const bannerRef = useRef<BannerAd>(null);
+
   return (
     <BasicContainer>
       <Header title="비상용품 체크리스트" />
@@ -193,9 +204,25 @@ const Checklist = () => {
           </AddItemButton>
         )}
       </ScrollContainer>
+      <BannerAdContainer>
+        <BannerAd
+          ref={bannerRef}
+          unitId={adUnitId!}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </BannerAdContainer>
     </BasicContainer>
   );
 };
+
+const BannerAdContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  margin-top: 16px;
+`;
 
 const ProgressTextContainer = styled.View`
   flex-direction: row;

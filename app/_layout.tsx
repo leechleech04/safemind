@@ -7,9 +7,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Asset } from 'expo-asset';
 import { Slot, SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
+import mobileAds from 'react-native-google-mobile-ads';
 import styled from 'styled-components/native';
 
 const RootLayout = () => {
+  useEffect(() => {
+    mobileAds()
+      .initialize()
+      .then(() => {
+        console.log('AdMob initialized');
+      });
+  }, []);
+
   useEffect(() => {
     const setChecklistItems = async () => {
       try {

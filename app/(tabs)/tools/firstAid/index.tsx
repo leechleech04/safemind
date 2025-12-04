@@ -4,11 +4,23 @@ import firstAids from '@/utils/firstAids';
 import { BasicContainer } from '@/utils/utilComponents';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { useRef } from 'react';
 import { FlatList } from 'react-native';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import styled from 'styled-components/native';
 
 const FirstAid = () => {
   const router = useRouter();
+
+  const adUnitId = __DEV__
+    ? TestIds.ADAPTIVE_BANNER
+    : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID;
+
+  const bannerRef = useRef<BannerAd>(null);
 
   return (
     <BasicContainer>
@@ -46,9 +58,25 @@ const FirstAid = () => {
           </AidItem>
         )}
       />
+      <BannerAdContainer>
+        <BannerAd
+          ref={bannerRef}
+          unitId={adUnitId!}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </BannerAdContainer>
     </BasicContainer>
   );
 };
+
+const BannerAdContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  margin-top: 16px;
+`;
 
 const Title = styled.Text`
   font-size: 24px;

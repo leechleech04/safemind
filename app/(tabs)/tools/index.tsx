@@ -2,7 +2,12 @@ import colors from '@/utils/colors';
 import { BasicContainer } from '@/utils/utilComponents';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import styled from 'styled-components/native';
 
 const Tools = () => {
@@ -40,6 +45,12 @@ const Tools = () => {
     setFlashOn(!flashOn);
   };
 
+  const adUnitId = __DEV__
+    ? TestIds.ADAPTIVE_BANNER
+    : process.env.EXPO_PUBLIC_BANNER_AD_UNIT_ID;
+
+  const bannerRef = useRef<BannerAd>(null);
+
   return (
     <BasicContainer>
       {flashOn && (
@@ -74,9 +85,25 @@ const Tools = () => {
           ))}
         </ToolContainer>
       </ScrollContainer>
+      <BannerAdContainer>
+        <BannerAd
+          ref={bannerRef}
+          unitId={adUnitId!}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </BannerAdContainer>
     </BasicContainer>
   );
 };
+
+const BannerAdContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  margin-top: 16px;
+`;
 
 const Header = styled.View`
   width: 100%;
