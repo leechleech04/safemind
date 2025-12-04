@@ -1,4 +1,4 @@
-import { fetchLocalName } from '@/api/localName';
+import { fetchLocalName } from '@/api/localNameApi';
 import { useQuery } from '@tanstack/react-query';
 
 export const useLocalNameQuery = (latitude: number, longitude: number) => {

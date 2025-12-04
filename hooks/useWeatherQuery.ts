@@ -1,4 +1,4 @@
-import { fetchWeather } from '@/api/weather';
+import { fetchWeather } from '@/api/weatherApi';
 import { useQuery } from '@tanstack/react-query';
 
 export const useWeatherQuery = (latitude: number, longitude: number) => {

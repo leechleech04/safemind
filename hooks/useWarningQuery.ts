@@ -1,4 +1,4 @@
-import { fetchWarning } from '@/api/warning';
+import { fetchWarning } from '@/api/warningApi';
 import { useQuery } from '@tanstack/react-query';
 
 export const useWarningQuery = () => {

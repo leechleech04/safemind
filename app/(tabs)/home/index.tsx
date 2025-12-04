@@ -1,3 +1,5 @@
+import AlertBanner from '@/components/AlertBanner';
+import WeatherInfo from '@/components/WeatherInfo';
 import { useLocalNameQuery } from '@/hooks/useLocalNameQuery';
 import { useParticularMatter } from '@/hooks/useParticularMatterQuery';
 import { useWarningQuery } from '@/hooks/useWarningQuery';
@@ -9,7 +11,7 @@ import {
   getColdWaveLevel,
   getHeatWaveLevel,
   getParticularMatterLevel,
-} from '@/utils/weather';
+} from '@/utils/weatherFormatter';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
@@ -17,7 +19,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, RefreshControl } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/native';
-import { getWeatherIcon } from './../../../utils/weather';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -78,7 +79,7 @@ const Home = () => {
     ]);
     setRefreshing(false);
   }, []);
-  console.log(warning);
+
   return (
     <BasicContainer>
       <LocationHeader>
@@ -94,42 +95,13 @@ const Home = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <BannerTitle>현재 날씨</BannerTitle>
-        <WeatherBanner>
-          <TemparatureBox>
-            {weather && !isWeatherLoading ? (
-              <>
-                <TemparatureText>{weather.temperature}°C</TemparatureText>
-                <ApparantTempratureText>
-                  체감 온도 {weather.perceivedTemperature}°C
-                </ApparantTempratureText>
-              </>
-            ) : (
-              <>
-                <TemparatureText>--°C</TemparatureText>
-                <ApparantTempratureText>체감 온도 --°C</ApparantTempratureText>
-              </>
-            )}
-          </TemparatureBox>
-          {weather ? (
-            <Ionicons
-              name={getWeatherIcon(weather.precipitation ?? 0).name}
-              size={80}
-              color={getWeatherIcon(weather.precipitation ?? 0).color}
-              style={{ marginLeft: 'auto' }}
-            />
-          ) : (
-            <ActivityIndicator
-              style={{ marginLeft: 'auto' }}
-              color={colors.red}
-              size={'large'}
-            />
-          )}
-        </WeatherBanner>
+        <WeatherInfo weather={weather} isWeatherLoading={isWarningLoading} />
         <BannerTitle>주요 경보</BannerTitle>
-        <AlertBanner>
-          <Ionicons name="thermometer-outline" size={28} color={colors.red} />
-          <AlertTitle>폭염</AlertTitle>
+        <AlertBanner
+          iconName="thermometer-outline"
+          iconColor={colors.red}
+          title="폭염"
+        >
           <HeatWaveContent>
             {weather && !isWeatherLoading ? (
               getHeatWaveLevel(weather.temperature!)
@@ -138,9 +110,11 @@ const Home = () => {
             )}
           </HeatWaveContent>
         </AlertBanner>
-        <AlertBanner>
-          <Ionicons name="snow-outline" size={28} color={colors.blue} />
-          <AlertTitle>한파</AlertTitle>
+        <AlertBanner
+          iconName="snow-outline"
+          iconColor={colors.blue}
+          title="한파"
+        >
           <ColdWaveContent>
             {weather && !isWeatherLoading ? (
               getColdWaveLevel(weather.temperature!)
@@ -149,9 +123,11 @@ const Home = () => {
             )}
           </ColdWaveContent>
         </AlertBanner>
-        <AlertBanner>
-          <Ionicons name="business-outline" size={28} color={colors.orange} />
-          <AlertTitle>미세먼지</AlertTitle>
+        <AlertBanner
+          iconName="business-outline"
+          iconColor={colors.orange}
+          title="미세먼지"
+        >
           {pm25 && !isPm25Loading ? (
             <>
               <ParticularMatter>{pm25} ㎍/㎥</ParticularMatter>
@@ -236,46 +212,6 @@ const BannerTitle = styled.Text`
   font-size: 20px;
   font-weight: bold;
   margin-top: 24px;
-`;
-
-const WeatherBanner = styled.View`
-  flex-direction: row;
-  align-items: center;
-  background-color: ${colors.darkGray};
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 16px;
-  width: 100%;
-`;
-
-const TemparatureBox = styled.View``;
-
-const TemparatureText = styled.Text`
-  color: ${colors.white};
-  font-size: 36px;
-  font-weight: bold;
-`;
-
-const ApparantTempratureText = styled.Text`
-  color: ${colors.lightGray};
-  font-size: 16px;
-  margin-top: 4px;
-`;
-
-const AlertBanner = styled.View`
-  flex-direction: row;
-  align-items: center;
-  background-color: ${colors.darkGray};
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 16px;
-  width: 100%;
-`;
-
-const AlertTitle = styled.Text`
-  color: ${colors.white};
-  font-size: 18px;
-  margin-left: 16px;
 `;
 
 const AlertContent = styled.Text`

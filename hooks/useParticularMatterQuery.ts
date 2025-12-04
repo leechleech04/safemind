@@ -1,4 +1,4 @@
-import { fetchParticularMatter } from '@/api/particularMatter';
+import { fetchParticularMatter } from '@/api/particularMatterApi';
 import { useQuery } from '@tanstack/react-query';
 
 export const useParticularMatter = (latitude: number, longitude: number) => {

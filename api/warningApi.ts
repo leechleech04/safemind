@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { ImageSourcePropType } from 'react-native';
 
+interface WarningType {
+  type: string;
+  regions: string;
+  image: ImageSourcePropType | null;
+}
+
 export const fetchWarning = async () => {
   const uri = 'https://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnStatus';
 
@@ -43,12 +49,6 @@ const parseWarnings = (warningText: string): WarningType[] => {
 
   return warnings;
 };
-
-interface WarningType {
-  type: string;
-  regions: string;
-  image: ImageSourcePropType | null;
-}
 
 const warningImages: {
   [key: string]: ImageSourcePropType;
