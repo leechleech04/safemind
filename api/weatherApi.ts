@@ -29,7 +29,7 @@ export const fetchWeather = async ({
 }) => {
   const { x, y } = latLonToGrid(latitude, longitude);
   const response = await axios.get<WeatherResponseType>(
-    'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst',
+    'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst',
     {
       params: {
         serviceKey: process.env.EXPO_PUBLIC_WEATHER_API_KEY,
