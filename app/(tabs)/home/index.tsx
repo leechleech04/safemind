@@ -105,6 +105,7 @@ const Home = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        contentContainerStyle={{ paddingBottom: 16 }}
       >
         <WeatherInfo weather={weather} isWeatherLoading={isWarningLoading} />
         <BannerTitle>주요 경보</BannerTitle>
@@ -190,7 +191,6 @@ const Home = () => {
 const BannerAdContainer = styled.View`
   width: 100%;
   align-items: center;
-  margin-top: 16px;
 `;
 
 const ScrollContainer = styled.ScrollView`
@@ -201,7 +201,7 @@ const ScrollContainer = styled.ScrollView`
 const LocationHeader = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 16px 8px;
+  padding: 0 8px 16px 8px;
 `;
 
 const LocationText = styled.Text`

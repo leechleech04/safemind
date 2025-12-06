@@ -49,7 +49,11 @@ const Siren = () => {
   return (
     <BasicContainer>
       <Header title="사이렌" />
-      <ScrollContainer>
+      <ScrollContainer
+        contentContainerStyle={{
+          paddingBottom: 16,
+        }}
+      >
         <SoundContainer>
           <SoundImage
             source={sounds.siren.image}

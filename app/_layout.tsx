@@ -11,6 +11,21 @@ import mobileAds from 'react-native-google-mobile-ads';
 import styled from 'styled-components/native';
 
 const RootLayout = () => {
+  const [queryClient] = useState(() => new QueryClient());
+
+  const preloadImages = () => {
+    return Asset.loadAsync(assets);
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      await Ionicons.loadFont();
+      await preloadImages();
+      await SplashScreen.hideAsync();
+    };
+    load();
+  }, []);
+
   useEffect(() => {
     mobileAds()
       .initialize()
@@ -178,21 +193,6 @@ const RootLayout = () => {
     };
 
     setChecklistItems();
-  }, []);
-
-  const [queryClient] = useState(() => new QueryClient());
-
-  const preloadImages = () => {
-    return Asset.loadAsync(assets);
-  };
-
-  useEffect(() => {
-    const load = async () => {
-      await Ionicons.loadFont();
-      await preloadImages();
-      await SplashScreen.hideAsync();
-    };
-    load();
   }, []);
 
   return (

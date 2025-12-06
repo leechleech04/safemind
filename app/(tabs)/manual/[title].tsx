@@ -100,7 +100,7 @@ const ManualDetail = () => {
   const levelInfo = LEVEL_CONFIG[details.level as keyof typeof LEVEL_CONFIG];
 
   return (
-    <BasicContainer>
+    <BasicContainer style={{ paddingBottom: 16 }}>
       <Header>
         <GoBackButton onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />

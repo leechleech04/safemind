@@ -5,7 +5,7 @@ import { BasicContainer } from '@/utils/utilComponents';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useRef } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import {
   BannerAd,
   BannerAdSize,
@@ -57,6 +57,7 @@ const FirstAid = () => {
             </AidButton>
           </AidItem>
         )}
+        ListFooterComponent={() => <View style={{ paddingBottom: 16 }} />}
       />
       <BannerAdContainer>
         <BannerAd
@@ -75,7 +76,6 @@ const FirstAid = () => {
 const BannerAdContainer = styled.View`
   width: 100%;
   align-items: center;
-  margin-top: 16px;
 `;
 
 const Title = styled.Text`

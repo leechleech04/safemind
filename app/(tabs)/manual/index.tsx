@@ -100,6 +100,7 @@ const Manual = () => {
             <SectorSummary>{disasterData.summary}</SectorSummary>
           ) : null;
         }}
+        ListFooterComponent={() => <View style={{ height: 16 }} />}
       />
       <BannerAdContainer>
         <BannerAd
@@ -118,7 +119,6 @@ const Manual = () => {
 const BannerAdContainer = styled.View`
   width: 100%;
   align-items: center;
-  margin-top: 16px;
 `;
 
 const Header = styled.View`

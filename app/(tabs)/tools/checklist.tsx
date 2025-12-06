@@ -14,7 +14,7 @@ import styled from 'styled-components/native';
 
 const Checklist = () => {
   interface ChecklistItemType {
-    sectors: { name: String; items: { label: String; isChecked: Boolean }[] }[];
+    sectors: { name: string; items: { label: string; isChecked: Boolean }[] }[];
   }
 
   const [checklistItems, setChecklistItems] =
@@ -79,11 +79,15 @@ const Checklist = () => {
     }
   };
 
-  const handleDeleteItem = (sectorIndex: number, itemIndex: number) => {
+  const handleDeleteItem = (
+    sectorIndex: number,
+    itemIndex: number,
+    label: string
+  ) => {
     if (checklistItems) {
       Alert.alert(
         '항목 삭제',
-        '정말로 이 항목을 삭제하시겠습니까?',
+        `정말로 ${label} 항목을 삭제하시겠습니까?`,
         [
           { text: '취소', style: 'cancel' },
           {
@@ -149,7 +153,7 @@ const Checklist = () => {
       <ProgressBarContainer>
         <ProgressBarFill progress={progressPercentage} />
       </ProgressBarContainer>
-      <ScrollContainer>
+      <ScrollContainer contentContainerStyle={{ paddingBottom: 16 }}>
         {checklistItems?.sectors.map((sector, sectorIndex) => (
           <SectorContainer key={sectorIndex}>
             <SectorTitle>{sector.name}</SectorTitle>
@@ -166,7 +170,9 @@ const Checklist = () => {
                 </ItemCheckButton>
                 <ItemLabel isChecked={item.isChecked}>{item.label}</ItemLabel>
                 <ItemDeleteButton
-                  onPress={() => handleDeleteItem(sectorIndex, itemIndex)}
+                  onPress={() =>
+                    handleDeleteItem(sectorIndex, itemIndex, item.label)
+                  }
                 >
                   <Ionicons name="trash-outline" size={24} color={colors.red} />
                 </ItemDeleteButton>
@@ -221,7 +227,6 @@ const Checklist = () => {
 const BannerAdContainer = styled.View`
   width: 100%;
   align-items: center;
-  margin-top: 16px;
 `;
 
 const ProgressTextContainer = styled.View`
